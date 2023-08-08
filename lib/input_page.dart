@@ -11,6 +11,8 @@ var maleCardColor = inActiveCardColor;
 var femaleCardColor = inActiveCardColor;
 const bottomColor = Color(0xFFEB1555);
 
+enum GenderEnum { female, male }
+
 class InputPage extends StatefulWidget {
   const InputPage({super.key});
 
@@ -19,8 +21,8 @@ class InputPage extends StatefulWidget {
 }
 
 class _InputPageState extends State<InputPage> {
-  void changeCardColor(id) {
-    if (id == 1) {
+  void changeCardColor({id}) {
+    if (id == GenderEnum.female) {
       if (femaleCardColor == activeColor) {
         femaleCardColor = inActiveCardColor;
       } else {
@@ -52,7 +54,7 @@ class _InputPageState extends State<InputPage> {
                     child: MyCard(
                   onPress: () {
                     setState(() {
-                      changeCardColor(1);
+                      changeCardColor(id: GenderEnum.female);
                     });
                   },
                   colors: femaleCardColor,
@@ -68,7 +70,7 @@ class _InputPageState extends State<InputPage> {
                   child: MyCard(
                     onPress: () {
                       setState(() {
-                        changeCardColor(2);
+                        changeCardColor(id: GenderEnum.male);
                       });
                     },
                     colors: maleCardColor,

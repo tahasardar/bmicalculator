@@ -1,0 +1,29 @@
+workflows:
+  ios_build:
+    name: iOS Build Workflow
+    environment:
+      vars:
+        # Define any environment variables needed
+        FLUTTER_CHANNEL: stable
+
+    # Specify the desired trigger (e.g., push to specific branch)
+    # triggers:
+    #   - push:
+    #       branch: master
+
+    # Set up the build steps
+    scripts:
+      # Ensure you're using the correct Flutter version/channel
+      - name: Set Flutter Channel
+        script: flutter channel $FLUTTER_CHANNEL
+      - name: Flutter Doctor
+        script: flutter doctor
+      - name: Flutter Packages Get
+        script: flutter packages get
+      - name: Build IPA
+        script: |
+          flutter build ios --release --no-codesign
+          xcodebuild -exportArchive -archivePath "build/ios/iphoneos/Runner.xcarchive" -exportPath "build/ios/ipa" -exportOptionsPlist "ExportOptions.plist"
+
+    artifacts:
+      - build/ios/ipa/Runner.ipa
