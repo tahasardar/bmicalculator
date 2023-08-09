@@ -1,15 +1,12 @@
-// ignore_for_file: use_full_hex_values_for_flutter_colors, prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: use_full_hex_values_for_flutter_colors, prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, sort_child_properties_last
 
+import 'package:bmicalculator/properity.dart';
+import 'package:bmicalculator/result_page.dart';
+import 'package:bmicalculator/slider_card.dart';
 import 'package:flutter/material.dart';
 import 'myCard.dart';
 import 'gender.dart';
-
-const bottomConatinerheight = 80.0;
-const activeColor = Color(0xFF01D1E33);
-const inActiveCardColor = Color(0xFF111328);
-var maleCardColor = inActiveCardColor;
-var femaleCardColor = inActiveCardColor;
-const bottomColor = Color(0xFFEB1555);
+import 'constants.dart';
 
 enum GenderEnum { female, male }
 
@@ -21,24 +18,9 @@ class InputPage extends StatefulWidget {
 }
 
 class _InputPageState extends State<InputPage> {
-  void changeCardColor({id}) {
-    if (id == GenderEnum.female) {
-      if (femaleCardColor == activeColor) {
-        femaleCardColor = inActiveCardColor;
-      } else {
-        femaleCardColor = activeColor;
-        maleCardColor = inActiveCardColor;
-      }
-    } else {
-      if (maleCardColor == activeColor) {
-        maleCardColor = inActiveCardColor;
-      } else {
-        maleCardColor = activeColor;
-        femaleCardColor = inActiveCardColor;
-      }
-    }
-  }
-
+  var weight = 53;
+  var age = 10;
+  var selectedGender;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +28,7 @@ class _InputPageState extends State<InputPage> {
         title: const Text("BMI Calculator"),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(
             child: Row(
@@ -54,10 +37,12 @@ class _InputPageState extends State<InputPage> {
                     child: MyCard(
                   onPress: () {
                     setState(() {
-                      changeCardColor(id: GenderEnum.female);
+                      selectedGender = GenderEnum.female;
                     });
                   },
-                  colors: femaleCardColor,
+                  colors: selectedGender == GenderEnum.female
+                      ? activeColor
+                      : inActiveCardColor,
                   carChild: Gender(
                     name: 'Female',
                     icon: Icon(
@@ -70,10 +55,12 @@ class _InputPageState extends State<InputPage> {
                   child: MyCard(
                     onPress: () {
                       setState(() {
-                        changeCardColor(id: GenderEnum.male);
+                        selectedGender = GenderEnum.male;
                       });
                     },
-                    colors: maleCardColor,
+                    colors: selectedGender == GenderEnum.male
+                        ? activeColor
+                        : inActiveCardColor,
                     carChild: Gender(
                       name: 'Male',
                       icon: Icon(
@@ -89,6 +76,14 @@ class _InputPageState extends State<InputPage> {
           Expanded(
             child: MyCard(
               colors: activeColor,
+              carChild: SliderCard(
+                height: kheight,
+                onChange: (double newValue) {
+                  setState(() {
+                    kheight = newValue.round();
+                  });
+                },
+              ),
             ),
           ),
           Expanded(
@@ -97,23 +92,65 @@ class _InputPageState extends State<InputPage> {
                 Expanded(
                   child: MyCard(
                     colors: activeColor,
+                    carChild: Properity(
+                      label: 'weight',
+                      weight: weight.toString(),
+                      pressAdd: () {
+                        setState(() {
+                          weight += 1;
+                        });
+                      },
+                      pressMinus: () {
+                        setState(() {
+                          weight > 0 ? weight -= 1 : {};
+                        });
+                      },
+                    ),
                   ),
                 ),
                 Expanded(
                   child: MyCard(
                     colors: activeColor,
+                    carChild: Properity(
+                      label: "Age",
+                      pressAdd: () {
+                        setState(() {
+                          age += 1;
+                        });
+                      },
+                      pressMinus: () {
+                        setState(() {
+                          age > 0 ? age -= 1 : {};
+                        });
+                      },
+                      weight: age,
+                    ),
                   ),
                 )
               ],
             ),
           ),
-          Container(
-            margin: const EdgeInsets.all(10),
-            width: double.infinity,
-            height: bottomConatinerheight,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: bottomColor,
+          GestureDetector(
+            onTap: () => {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ResultPage()))
+            },
+            child: Container(
+              margin: const EdgeInsets.all(10),
+              width: double.infinity,
+              child: Center(
+                child: Text(
+                  'CALCULATE',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              height: bottomConatinerheight,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: bottomColor,
+              ),
             ),
           ),
         ],
